@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>H.A.I – Holo-Artisan Intelligence</title>
+  <style>
+    :root {
+      --bg: #050816;
+      --bg-alt: #0b1020;
+      --card: #111827;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.12);
+      --accent-secondary: #a855f7;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --border-subtle: #1f2937;
+      --danger: #f97373;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      background: radial-gradient(circle at top, #111827 0, var(--bg) 50%, #020617 100%);
+      color: var(--text-main);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding-top: 70px; /* space for fixed navbar */
+    }
+
+    a { color: inherit; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* =========  NAVBAR  ========= */
+    .site-header {
+      position: fixed;
+      inset: 0 0 auto 0;
+      height: 70px;
+      z-index: 40;
+      background: linear-gradient(to bottom, rgba(15,23,42,0.98), rgba(15,23,42,0.9));
+      border-bottom: 1px solid rgba(31,41,55,0.9);
+      backdrop-filter: blur(18px);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #fff 0, #e5e7eb 18%, #020617 65%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      box-shadow: 0 0 25px rgba(56,189,248,0.5);
+    }
+
+    .brand-logo span {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      border: 2px solid #020617;
+      box-shadow: 0 0 0 3px rgba(15,23,42,0.9);
+      background: #f9fafb;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .brand-name {
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+    }
+
+    .brand-sub {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      list-style: none;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .nav-links a {
+      padding: 0.3rem 0.5rem;
+      border-radius: 999px;
+      position: relative;
+      white-space: nowrap;
+    }
+
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0.6rem;
+      right: 0.6rem;
+      bottom: 0.15rem;
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(to right, var(--accent), var(--accent-secondary));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.16s ease;
+      opacity: 0.9;
+    }
+
+    .nav-links a:hover::after {
+      transform: scaleX(1);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .lang-btn {
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(15,23,42,0.9);
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      padding: 0.4rem 0.9rem;
+      cursor: pointer;
+    }
+
+    .nav-cta {
+      border-radius: 999px;
+      border: none;
+      padding: 0.5rem 1rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+      color: #020617;
+      box-shadow: 0 12px 30px rgba(37,99,235,0.6);
+    }
+
+    .nav-toggle {
+      display: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(15,23,42,0.95);
+      color: var(--text-main);
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+
+    /* Language helper */
+    .lang-zh { display: inline; }
+    .lang-en { display: none; }
+    body[data-lang="en"] .lang-zh { display: none; }
+    body[data-lang="en"] .lang-en { display: inline; }
+
+    /* ========= HERO ========= */
+    .hero {
+      position: relative;
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3.5rem 1.5rem 2.5rem;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(248, 250, 252, 0.06) 0, transparent 55%),
+        radial-gradient(circle at 80% 100%, rgba(56, 189, 248, 0.18) 0, transparent 60%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      position: relative;
+      max-width: 1120px;
+      width: 100%;
+      display: grid;
+      gap: 3rem;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      align-items: center;
+      z-index: 1;
+    }
+
+    .hero-text h1 {
+      font-size: clamp(2.4rem, 3.3vw, 3.3rem);
+      letter-spacing: 0.03em;
+      margin-bottom: 0.75rem;
+    }
+
+    .hero-text h1 span.gradient {
+      background: linear-gradient(to right, #38bdf8, #a855f7);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .hero-text p.lead {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 32rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .badge {
+      font-size: 0.78rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(15, 23, 42, 0.85);
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .badge-dot {
+      width: 0.4rem;
+      height: 0.4rem;
+      border-radius: 999px;
+      background: #22c55e;
+    }
+
+    .hero-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1.3rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #38bdf8, #6366f1);
+      color: #0b1120;
+      box-shadow: 0 18px 45px rgba(37, 99, 235, 0.6);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 22px 55px rgba(37, 99, 235, 0.7);
+    }
+
+    .btn-secondary {
+      background: rgba(15, 23, 42, 0.85);
+      color: var(--text-main);
+      border-color: var(--border-subtle);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(15, 23, 42, 0.98);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary span.icon,
+    .btn-secondary span.icon {
+      font-size: 1.05rem;
+      margin-right: 0.4rem;
+    }
+
+    .hero-meta {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .hero-visual {
+      position: relative;
+      padding: 1.5rem;
+    }
+
+    .holo-card {
+      position: relative;
+      border-radius: 1.4rem;
+      padding: 1.6rem 1.5rem;
+      background: radial-gradient(circle at 0 0, rgba(248, 250, 252, 0.08), transparent 55%),
+                  radial-gradient(circle at 100% 100%, rgba(56, 189, 248, 0.25), transparent 55%),
+                  #020617;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      overflow: hidden;
+    }
+
+    .holo-card-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      margin-bottom: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .holo-stack {
+      position: relative;
+      width: 100%;
+      padding-top: 60%;
+      margin-bottom: 1.2rem;
+    }
+
+    .holo-layer {
+      position: absolute;
+      inset: 0;
+      border-radius: 1rem;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: radial-gradient(circle at 20% 0%, rgba(248, 250, 252, 0.06), transparent 55%),
+                  radial-gradient(circle at 80% 100%, rgba(56, 189, 248, 0.18), transparent 60%),
+                  rgba(15, 23, 42, 0.96);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.9);
+      transform-origin: center;
+    }
+
+    .holo-layer.layer-back {
+      transform: translate(-12px, 10px) rotate(-5deg);
+      opacity: 0.6;
+    }
+
+    .holo-layer.layer-mid {
+      transform: translate(10px, -6px) rotate(4deg);
+      opacity: 0.8;
+    }
+
+    .holo-layer.layer-front {
+      transform: translate(0, 0) rotate(0deg);
+    }
+
+    .holo-portrait {
+      position: absolute;
+      inset: 12% 18%;
+      border-radius: 0.9rem;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(252, 211, 77, 0.4), transparent 55%),
+        radial-gradient(circle at 70% 75%, rgba(59, 130, 246, 0.45), transparent 60%),
+        linear-gradient(135deg, #020617, #0f172a 35%, #111827 70%, #020617 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .holo-portrait::before {
+      content: "";
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid rgba(248, 250, 252, 0.9);
+      box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.18);
+    }
+
+    .holo-rays {
+      position: absolute;
+      inset: 15% 7% auto 7%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      pointer-events: none;
+    }
+
+    .ray {
+      flex: 1;
+      height: 2px;
+      margin: 0 0.2rem;
+      background: linear-gradient(to right, rgba(56, 189, 248, 0.1), rgba(56, 189, 248, 0.85));
+    }
+
+    .holo-users {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-top: 0.9rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .holo-users span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .dot-happy { color: #22c55e; }
+    .dot-curious { color: #38bdf8; }
+    .dot-calm { color: #facc15; }
+
+    /* ========= GENERIC SECTIONS ========= */
+    .section {
+      padding: 3.2rem 1.5rem;
+    }
+
+    .section-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      margin-bottom: 1.9rem;
+    }
+
+    .section-kicker {
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+    }
+
+    .section-title {
+      font-size: 1.7rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .section-subtitle {
+      font-size: 0.96rem;
+      color: var(--text-muted);
+      max-width: 40rem;
+    }
+
+    .two-col {
+      display: grid;
+      gap: 1.8rem;
+    }
+
+    .card {
+      background: radial-gradient(circle at 0 0, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.95));
+      border-radius: 1.2rem;
+      border: 1px solid var(--border-subtle);
+      padding: 1.6rem 1.5rem 1.5rem;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.9);
+    }
+
+    .card h3 {
+      font-size: 1.05rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .card p {
+      font-size: 0.93rem;
+      color: var(--text-muted);
+    }
+
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: 0.75rem;
+    }
+
+    .pill {
+      font-size: 0.8rem;
+      padding: 0.22rem 0.6rem;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+    }
+
+    .highlight {
+      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.12), transparent 55%), var(--bg-alt);
+      border-block: 1px solid rgba(55, 65, 81, 0.9);
+    }
+
+    /* ========= DYNAMIC SCENARIO (from spreadsheet) ========= */
+    .scenario-layout {
+      display: grid;
+      gap: 1.8rem;
+      align-items: start;
+    }
+
+    .scenario-box {
+      background: rgba(10, 10, 10, 0.88);
+      border-radius: 1.1rem;
+      border: 1px solid var(--border-subtle);
+      padding: 1.5rem 1.5rem 1.2rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 45px rgba(56, 189, 248, 0.16);
+    }
+
+    .scenario-box::before {
+      content: "ASyMMETRIC PERSONALIZED EXPERIENCE";
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      opacity: 0.75;
+    }
+
+    .script-stage {
+      min-height: 170px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0.5rem;
+      padding-top: 1.4rem;
+    }
+
+    .script-time {
+      font-family: monospace;
+      color: var(--accent);
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .script-visual {
+      font-size: 0.98rem;
+      font-weight: 500;
+      text-shadow: 0 0 10px rgba(255,255,255,0.25);
+    }
+
+    .script-audio {
+      font-size: 0.9rem;
+      font-style: italic;
+      color: var(--accent-secondary);
+    }
+
+    .script-note {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .progress-bar {
+      height: 2px;
+      background: #1f2933;
+      width: 100%;
+      margin-top: 1.4rem;
+      position: relative;
+      overflow: hidden;
+      border-radius: 999px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+      width: 0%;
+      transition: width 0.12s linear;
+    }
+
+    .scenario-notes {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .scenario-notes ul {
+      margin-top: 0.5rem;
+      padding-left: 1.1rem;
+    }
+
+    /* ========= VIDEO GRIDS ========= */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.8rem;
+      margin-top: 2rem;
+    }
+
+    .video-card {
+      background: var(--bg-alt);
+      border-radius: 1rem;
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .video-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 0 0 32px rgba(56,189,248,0.25);
+    }
+
+    .video-wrapper {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+    }
+
+    .video-wrapper iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .video-info {
+      padding: 1.2rem 1.3rem 1.3rem;
+    }
+
+    .video-info h3 {
+      font-size: 1.05rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .video-info p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .video-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    /* ========= PARTNERS / OPERATIONS / TEAM ========= */
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .pill-soft {
+      padding: 0.3rem 0.7rem;
+      border-radius: 999px;
+      border: 1px dashed var(--border-subtle);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background: rgba(15,23,42,0.9);
+    }
+
+    .columns-3 {
+      display: grid;
+      gap: 1.3rem;
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .team-card {
+      background: rgba(15,23,42,0.96);
+      border-radius: 1.1rem;
+      border: 1px solid var(--border-subtle);
+      padding: 1.2rem 1.3rem 1.2rem;
+    }
+
+    .team-name {
+      font-weight: 600;
+      margin-bottom: 0.1rem;
+    }
+
+    .team-role {
+      font-size: 0.85rem;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+    }
+
+    /* ========= CONTACT & FOOTER ========= */
+    .contact-grid {
+      display: grid;
+      gap: 1.8rem;
+    }
+
+    form.contact-form {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .contact-form label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .contact-form input,
+    .contact-form textarea,
+    .contact-form select {
+      width: 100%;
+      border-radius: 0.7rem;
+      border: 1px solid var(--border-subtle);
+      background: rgba(15,23,42,0.95);
+      padding: 0.6rem 0.7rem;
+      color: var(--text-main);
+      font-size: 0.9rem;
+    }
+
+    .contact-form textarea { min-height: 140px; resize: vertical; }
+
+    .contact-form button {
+      margin-top: 0.4rem;
+      border-radius: 999px;
+      border: none;
+      padding: 0.7rem 1.3rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+      color: #020617;
+      box-shadow: 0 10px 26px rgba(37,99,235,0.7);
+    }
+
+    footer {
+      border-top: 1px solid rgba(31, 41, 55, 0.95);
+      padding: 1.4rem 1.5rem 2rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    footer .inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      justify-content: space-between;
+    }
+
+    /* ========= RESPONSIVE ========= */
+    @media (min-width: 880px) {
+      .two-col {
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      }
+      .columns-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .contact-grid {
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 880px) {
+      .hero-inner {
+        grid-template-columns: minmax(0, 1fr);
+        text-align: left;
+      }
+
+      .hero {
+        padding-top: 2.2rem;
+      }
+
+      .hero-visual { order: -1; padding: 0.5rem 0 0; }
+
+      .hero-text h1 { font-size: 2.1rem; }
+
+      .hero-cta { justify-content: flex-start; }
+
+      .scenario-layout { grid-template-columns: minmax(0, 1fr); }
+
+      .nav-links {
+        position: absolute;
+        inset: 70px 0 auto 0;
+        background: rgba(15,23,42,0.98);
+        flex-direction: column;
+        padding: 0.75rem 1.5rem 1rem;
+        display: none;
+      }
+
+      body.nav-open .nav-links { display: flex; }
+
+      .nav-toggle { display: flex; }
+    }
+
+    @media (max-width: 600px) {
+      .section { padding-inline: 1.1rem; }
+
+      .hero { padding-inline: 1.1rem; }
+
+      .holo-card { padding-inline: 1.1rem; }
+
+      .hero-cta { flex-direction: column; align-items: stretch; }
+
+      .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body data-lang="zh">
+  <header class="site-header">
+    <div class="container nav-inner">
+      <div class="brand">
+        <div class="brand-logo"><span></span></div>
+        <div class="brand-text">
+          <span class="brand-name">H.A.I</span>
+          <span class="brand-sub">Holo-Artisan Intelligence</span>
+        </div>
+      </div>
+      <button class="nav-toggle" id="navToggle">≡</button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#hero"><span class="lang-zh">首頁</span><span class="lang-en">Home</span></a></li>
+        <li><a href="#scenario"><span class="lang-zh">情境演示</span><span class="lang-en">Scenario</span></a></li>
+        <li><a href="#media"><span class="lang-zh">影音專區</span><span class="lang-en">Media</span></a></li>
+        <li><a href="#tech"><span class="lang-zh">技術專區</span><span class="lang-en">Tech</span></a></li>
+        <li><a href="#solutions"><span class="lang-zh">解決方案</span><span class="lang-en">Solutions</span></a></li>
+        <li><a href="#partners"><span class="lang-zh">合作夥伴</span><span class="lang-en">Partners</span></a></li>
+        <li><a href="#operations"><span class="lang-zh">營運模式</span><span class="lang-en">Business</span></a></li>
+        <li><a href="#team"><span class="lang-zh">團隊</span><span class="lang-en">Team</span></a></li>
+        <li><a href="#investor"><span class="lang-zh">投資人專區</span><span class="lang-en">Investors</span></a></li>
+        <li><a href="#contact"><span class="lang-zh">聯絡我們</span><span class="lang-en">Contact</span></a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="lang-btn" id="langToggle">
+          <span class="lang-zh">中 / EN</span>
+          <span class="lang-en">EN / 中</span>
+        </button>
+        <button class="nav-cta" onclick="document.getElementById('media').scrollIntoView({behavior:'smooth'})">
+          <span class="lang-zh">觀看 MVP</span>
+          <span class="lang-en">Watch MVP</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO / INTRO -->
+    <section id="hero" class="hero">
+      <div class="hero-inner">
+        <div class="hero-text">
+          <div class="badge-row">
+            <span class="badge"><span class="badge-dot"></span>Multi-User Personalized Holographic Experience</span>
+            <span class="badge">Edge AI · Federated Learning · Generative A.I.</span>
+          </div>
+          <h1>
+            <span class="gradient">Holo-Artisan 心繪光影</span><br />
+            <span class="lang-zh">虛實融合的個人化全像博物館體驗</span>
+            <span class="lang-en">A Personalized Multi-User Holographic Museum on the Edge</span>
+          </h1>
+          <p class="lead">
+            <span class="lang-zh">
+              同一幅〈蒙娜麗莎〉，三位觀眾，三種截然不同的回應。無需穿戴任何頭盔，在實體展場中即時感受
+              AI 與全像光學帶來的「對話式藝術」。
+            </span>
+            <span class="lang-en">
+              One Mona Lisa, three visitors, three completely different responses. No headset required –
+              just walk into the gallery and experience conversational art powered by AI and holography.
+            </span>
+          </p>
+          <div class="hero-cta">
+            <a href="#media" class="btn-primary"><span class="icon">▶</span><span class="lang-zh">觀看 MVP Demo 影片</span><span class="lang-en">Watch MVP Demo</span></a>
+            <a href="#investor" class="btn-secondary"><span class="icon">★</span><span class="lang-zh">給評審與 VC 的 2 分鐘重點</span><span class="lang-en">2-Min Pitch for Judges &amp; VCs</span></a>
+          </div>
+          <div class="hero-meta">
+            <span class="lang-zh">建議影片長度：2–3 分鐘 · 目標觀眾：創客競賽評審、政府補助審查委員、風險投資人。</span>
+            <span class="lang-en">Recommended video length: 2–3 minutes · Target: competition juries, public funding panels, and VCs.</span>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="holo-card">
+            <div class="holo-card-title">
+              <span>Mona Lisa · Multi-User Hologram</span>
+              <span>Edge Node · NVIDIA Jetson / A100</span>
+            </div>
+            <div class="holo-stack" aria-hidden="true">
+              <div class="holo-layer layer-back"></div>
+              <div class="holo-layer layer-mid"></div>
+              <div class="holo-layer layer-front">
+                <div class="holo-portrait"></div>
+                <div class="holo-rays">
+                  <div class="ray"></div>
+                  <div class="ray"></div>
+                  <div class="ray"></div>
+                </div>
+              </div>
+            </div>
+            <div class="holo-users">
+              <span><span class="dot-happy">●</span>U1：微笑 → 蒙娜麗莎回以微笑</span>
+              <span><span class="dot-curious">●</span>U2：發問 → 即時語音解說</span>
+              <span><span class="dot-calm">●</span>U3：靜靜觀看 → 維持經典神情</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DYNAMIC SCENARIO (Asymmetric Personalized Experience) -->
+    <section id="scenario" class="section highlight">
+      <div class="section-inner scenario-layout">
+        <div>
+          <div class="section-header">
+            <div class="section-kicker">CUSTOMER EXPERIENCE – MONA LISA SCENARIO</div>
+            <h2 class="section-title">顧客體驗篇：蒙娜麗莎的秘密微笑</h2>
+            <p class="section-subtitle">
+              依照劇本時間軸動態輪播文字，模擬「非對稱個人化體驗 (Asymmetric Personalized Experience)」：
+              同一幅畫，User A、B、C 在同一時刻看到完全不同的影像與聽到不同聲音，卻互不干擾。
+            </p>
+          </div>
+          <div class="scenario-box">
+            <div class="script-stage" id="scriptStage">
+              <div class="script-time">00:00 – 00:00</div>
+              <div class="script-visual">正在載入體驗劇本...</div>
+              <div class="script-audio"></div>
+              <div class="script-note"></div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+          </div>
+        </div>
+        <div class="scenario-notes">
+          <p>
+            劇本重點摘錄：
+          </p>
+          <ul>
+            <li>00:00–00:10：建立真實感，強調「沒有玻璃反光」的沉浸感。</li>
+            <li>00:20–00:25：只有 User A 看到蒙娜麗莎回以微笑，凸顯專屬互動。</li>
+            <li>00:35–00:45：User B 收到 AI 生成語音與嘴型同步，展示 Edge AI 能力。</li>
+            <li>00:45–00:55：User C 只看到經典靜態畫作，說明公共空間的「多工但不打擾」。</li>
+            <li>00:55–01:00：Logo 與標語「Personalized Holography. No Glasses.」作為結尾。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- MEDIA SECTION: MVP + CUSTOMER EXPERIENCE -->
+    <section id="media" class="section">
+      <div class="section-inner">
+        <div class="section-header" style="text-align:center;">
+          <div class="section-kicker">MVP & CUSTOMER EXPERIENCE</div>
+          <h2 class="section-title">影音專區：核心概念與顧客體驗</h2>
+          <p class="section-subtitle" style="margin:0 auto;">
+            首頁優先呈現兩支關鍵影片：Holo-Artisan 整體概念 MVP Demo，以及「蒙娜麗莎的秘密微笑」非對稱個人化體驗。
+          </p>
+        </div>
+        <div class="video-grid">
+          <div class="video-card">
+            <div class="video-wrapper">
+              <iframe src="https://www.youtube.com/embed/1j7HLomCyVM" title="Holo-Artisan MVP Demo" allowfullscreen></iframe>
+            </div>
+            <div class="video-info">
+              <span class="video-badge">MVP Demo</span>
+              <h3>Holo Artisan MVP Demo – Holo-Artisan Intelligence Concept</h3>
+              <p>心繪光影整體概念：從觀眾感知、邊緣推論、光學顯示到營運模式的一鏡到底詮釋。</p>
+            </div>
+          </div>
+
+          <div class="video-card">
+            <div class="video-wrapper">
+              <iframe src="https://www.youtube.com/embed/Lhs02uEh5to" title="Mona Lisa Secret Smile" allowfullscreen></iframe>
+            </div>
+            <div class="video-info">
+              <span class="video-badge">Customer Experience</span>
+              <h3>顧客體驗篇：蒙娜麗莎的秘密微笑</h3>
+              <p>非對稱個人化體驗 (Asymmetric Personalized Experience)：User A、B、C 在同一幅畫前的平行時空。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TECH SECTION: AI TO PHOTON + ACOUSTICS -->
+    <section id="tech" class="section" style="background:#050810;">
+      <div class="section-inner">
+        <div class="section-header" style="text-align:center;">
+          <div class="section-kicker">TECH SHOWCASE</div>
+          <h2 class="section-title">技術專區：從 AI 到光子與聲學技術</h2>
+          <p class="section-subtitle" style="margin:0 auto;">
+            兩支「技術解密篇」影片，補充說明 LCoS 相位全像、邊緣運算、空間聲學與波束成形等關鍵技術火力。
+          </p>
+        </div>
+        <div class="video-grid">
+          <div class="video-card" style="border-color:var(--accent);">
+            <div class="video-wrapper">
+              <iframe src="https://www.youtube.com/embed/jS7u-6njFdI" title="AI to Photon" allowfullscreen></iframe>
+            </div>
+            <div class="video-info">
+              <span class="video-badge">Tech Vol.1</span>
+              <h3>Holo Artisan 技術解密篇：從 AI 到光子</h3>
+              <p>說明如何將生成式 AI 的輸出轉換成電腦生成全像 (CGH)，並在 LCoS / SLM 上即時顯示。</p>
+            </div>
+          </div>
+
+          <div class="video-card" style="border-color:var(--accent-secondary);">
+            <div class="video-wrapper">
+              <iframe src="https://www.youtube.com/embed/ZWqzy1WWr08" title="Acoustics" allowfullscreen></iframe>
+            </div>
+            <div class="video-info">
+              <span class="video-badge">Tech Vol.2</span>
+              <h3>Holo Artisan 技術解密篇：聲學技術</h3>
+              <p>介紹波束成形 (Beamforming) 與空間音訊如何讓每位觀眾聽到專屬聲音，卻不互相干擾。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOLUTIONS -->
+    <section id="solutions" class="section">
+      <div class="section-inner two-col">
+        <div>
+          <div class="section-header">
+            <div class="section-kicker">SOLUTIONS</div>
+            <h2 class="section-title">產品與解決方案矩陣</h2>
+            <p class="section-subtitle">
+              從單一展品 PoC，到整館旗艦場域，再到跨城市的分散式全像節點，H.A.I 以模組化方式提供硬體、內容與
+              平台服務，讓博物館、美術館、品牌與城市公共藝術都能快速導入。
+            </p>
+          </div>
+          <div class="card">
+            <h3>1. Museum-in-a-Box – 可攜式互動展品</h3>
+            <p>
+              針對教育場域、行動巡迴展與企業展示，提供「一箱到位」的全像互動裝置：內含 Edge AI 模組、LCoS 顯示、
+              定向揚聲器與預載內容，支援離線與雲端同步兩種模式。
+            </p>
+            <div class="pill-list">
+              <span class="pill">學校巡迴展</span>
+              <span class="pill">企業品牌館</span>
+              <span class="pill">快閃活動 / Pop-up</span>
+            </div>
+          </div>
+          <div class="card" style="margin-top:1rem;">
+            <h3>2. Flagship Holo Gallery – 旗艦級沉浸式展廳</h3>
+            <p>
+              為美術館與大型場館打造多節點全像裝置，支援多幅名畫、多件雕塑與沉浸式故事線，搭配策展人後台系統
+              進行情境編排與數據分析。
+            </p>
+            <div class="pill-list">
+              <span class="pill">可編排式情境腳本</span>
+              <span class="pill">觀眾行為熱力圖</span>
+              <span class="pill">A/B 測試不同版本故事</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <h3>3. H.A.I Cloud & Edge Platform – 平台與 API</h3>
+            <p>
+              以 PaaS 形式提供裝置管理、模型更新、內容發佈與數據分析後台，讓國際合作策展與 IP 方可以遠端上架
+              新作品，並即時查看各場域的互動指標。
+            </p>
+            <div class="pill-list">
+              <span class="pill">多場域裝置管理</span>
+              <span class="pill">聯邦學習模型更新</span>
+              <span class="pill">內容授權與計費 API</span>
+            </div>
+          </div>
+          <div class="card" style="margin-top:1rem;">
+            <h3>4. Consulting & Co-Creation – 聯合策展與顧問服務</h3>
+            <p>
+              與博物館、設計團隊與藝術家共同開發新型態作品，從技術可行性評估、體驗設計到營運模式設計，形成
+              長期合作的「內容生態系」。
+            </p>
+            <div class="pill-list">
+              <span class="pill">IP 授權合作</span>
+              <span class="pill">全像內容共創</span>
+              <span class="pill">長期維運合約</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PARTNERS -->
+    <section id="partners" class="section highlight">
+      <div class="section-inner">
+        <div class="section-header">
+          <div class="section-kicker">STRATEGIC PARTNERS</div>
+          <h2 class="section-title">策略合作夥伴版圖</h2>
+          <p class="section-subtitle">
+            H.A.I 以「技術火力 × 策展場域 × 生態夥伴」三軸思維佈局合作夥伴，從 GPU / SLM 供應商到博物館、
+            政府單位與創投，一起打造下一代虛實融合內容平台。
+          </p>
+        </div>
+        <div class="columns-3">
+          <div class="card">
+            <h3>技術與硬體夥伴</h3>
+            <p>提供 GPU / NPU、SLM、光學與聲學模組等關鍵零組件與設計支援。</p>
+            <div class="pill-row">
+              <span class="pill-soft">NVIDIA · Edge & Data Center GPU</span>
+              <span class="pill-soft">Himax / Sony / HOLOEYE – LCoS / SLM</span>
+              <span class="pill-soft">音響與波束成形廠商</span>
+            </div>
+          </div>
+          <div class="card">
+            <h3>場域與內容夥伴</h3>
+            <p>與博物館、美術館、文化場館與數位藝術團隊合作，將經典藏品與 IP 全像化。</p>
+            <div class="pill-row">
+              <span class="pill-soft">國內外博物館與美術館</span>
+              <span class="pill-soft">數位藝術團隊（如 teamLab 類型）</span>
+              <span class="pill-soft">IP / 版權方與出版社</span>
+            </div>
+          </div>
+          <div class="card">
+            <h3>政府、加速器與創投</h3>
+            <p>結合政府補助、育成計畫與創投資金，加速旗艦場域落地與國際擴張。</p>
+            <div class="pill-row">
+              <span class="pill-soft">國內新創育成與加速器</span>
+              <span class="pill-soft">文化部 / 科技部補助計畫</span>
+              <span class="pill-soft">早期與成長型創投基金</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- OPERATIONS / BUSINESS MODEL -->
+    <section id="operations" class="section">
+      <div class="section-inner two-col">
+        <div>
+          <div class="section-header">
+            <div class="section-kicker">BUSINESS MODEL</div>
+            <h2 class="section-title">營運模式與收入結構</h2>
+            <p class="section-subtitle">
+              透過「裝置銷售 + SaaS / PaaS 授權 + 內容分潤」，H.A.I 形成兼具一次性與經常性收入的商業模式，
+              同時保留與 IP 方及場館長期共創的彈性。
+            </p>
+          </div>
+          <div class="card">
+            <h3>收入來源</h3>
+            <ul class="pill-list">
+              <li class="pill">硬體裝置與整合專案收入</li>
+              <li class="pill">平台訂閱 / SaaS 授權 (月費 / 年費)</li>
+              <li class="pill">內容授權與票房分潤</li>
+              <li class="pill">技術顧問與聯合策展服務</li>
+            </ul>
+            <p style="margin-top:0.8rem;" class="tagline">
+              早期以旗艦示範場域與 PoC 專案為主，中期導入多場域平台化部署，長期打造跨城市、跨國家的
+              H.A.I 全像節點網路。
+            </p>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <h3>營運辦法與合作模式（示意）</h3>
+            <ul class="pill-list">
+              <li class="pill">與場館簽訂 3–5 年長期合作合約</li>
+              <li class="pill">由 H.A.I 提供硬體、平台與維運服務</li>
+              <li class="pill">策展方 / IP 方提供內容與故事線</li>
+              <li class="pill">雙方依票房、導覽收入或授權費分潤</li>
+            </ul>
+            <p style="margin-top:0.8rem;" class="tagline">
+              可視場域規模與資本結構調整 CAPEX / OPEX 比例，例如採用收入分享、租賃或 PPP / BOT 等模式，
+              降低場館一次性投資壓力。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TEAM -->
+    <section id="team" class="section highlight">
+      <div class="section-inner">
+        <div class="section-header">
+          <div class="section-kicker">CORE TEAM</div>
+          <h2 class="section-title">核心團隊與跨域背景</h2>
+          <p class="section-subtitle">
+            團隊橫跨光學系統整合、AI / Edge Computing、互動設計與策展營運，結合產學研與國際合作經驗，
+            共同打造 Holo-Artisan 生態系。
+          </p>
+        </div>
+        <div class="team-grid">
+          <div class="team-card">
+            <div class="team-name">Founder / CEO</div>
+            <div class="team-role">系統總體架構 · 商業策略</div>
+            <p>負責整體產品願景、商業模式設計與國內外合作夥伴拓展。</p>
+          </div>
+          <div class="team-card">
+            <div class="team-name">Co-Founder / CTO</div>
+            <div class="team-role">光學與硬體系統整合</div>
+            <p>專長於 LCoS、HOE、空間光調變與光學實驗，主導硬體架構與實驗室到場域的技術轉移。</p>
+          </div>
+          <div class="team-card">
+            <div class="team-name">Head of AI & Edge</div>
+            <div class="team-role">Edge AI · 聯邦學習 · 系統優化</div>
+            <p>負責感知模組、生成式模型與邊緣運算平台的研發與部署。</p>
+          </div>
+          <div class="team-card">
+            <div class="team-name">Creative Director</div>
+            <div class="team-role">互動體驗 · 策展與內容</div>
+            <p>與策展人與藝術家合作，將技術能力轉譯成具情感與敘事力的體驗腳本。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INVESTOR ZONE -->
+    <section id="investor" class="section">
+      <div class="section-inner two-col">
+        <div>
+          <div class="section-header">
+            <div class="section-kicker">FOR INVESTORS</div>
+            <h2 class="section-title">投資人專區：2 分鐘重點總結</h2>
+            <p class="section-subtitle">
+              本區可對應簡報與 PDF 投資提案，快速說明市場痛點、技術護城河與財務成長路徑，方便評審與
+              投資人在有限時間內掌握精華。
+            </p>
+          </div>
+          <div class="card">
+            <h3>一、我們解決的痛點</h3>
+            <ul class="pill-list">
+              <li class="pill">現有展場多為單向播片，缺乏人味與記憶點。</li>
+              <li class="pill">VR / AR 需要頭盔，破壞公共場域的社交感與儀式感。</li>
+              <li class="pill">純雲端串流延遲與頻寬昂貴，不適合大量即時互動。</li>
+            </ul>
+            <h3 style="margin-top:1rem;">二、Holo-Artisan 的解法</h3>
+            <ul class="pill-list">
+              <li class="pill">多用戶、無穿戴、即時個人化全像顯示。</li>
+              <li class="pill">Edge AI + 聯邦學習：端到端延遲 &lt; 35 ms，頻寬節省 &gt; 99%。</li>
+              <li class="pill">從硬體系統 → 內容平台 → SaaS / PaaS 生態系。</li>
+            </ul>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <h3>關鍵指標與投資資料下載</h3>
+            <p>您可在此放置正式投資簡報與財務試算 PDF 檔，供評審與投資人下載。</p>
+            <ul class="pill-list">
+              <li class="pill">互動延遲：&lt; 35 ms</li>
+              <li class="pill">頻寬節省：&gt; 99.7%</li>
+              <li class="pill">CGH 計算：50 萬 3D 點 ≈ 27 ms</li>
+            </ul>
+            <p style="margin-top:0.8rem;">
+              <a href="Holo-Artisan_Investor_Deck.pdf" target="_blank" style="text-decoration:underline;">下載投資簡報 PDF (示意連結)</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section highlight">
+      <div class="section-inner contact-grid">
+        <div>
+          <div class="section-header">
+            <div class="section-kicker">CONTACT</div>
+            <h2 class="section-title">聯絡我們 · 共同打造下一個旗艦場域</h2>
+            <p class="section-subtitle">
+              若您是博物館、品牌場館、藝術家、技術供應商或投資人，歡迎透過表單留下訊息，我們將盡快與您聯繫。
+            </p>
+          </div>
+          <form class="contact-form">
+            <div>
+              <label for="name">姓名 / Name</label>
+              <input id="name" name="name" type="text" placeholder="您的名字" />
+            </div>
+            <div>
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" placeholder="you@example.com" />
+            </div>
+            <div>
+              <label for="role">您是…</label>
+              <select id="role" name="role">
+                <option>博物館 / 場館代表</option>
+                <option>品牌 / 企業展館</option>
+                <option>藝術家 / 策展人</option>
+                <option>技術 / 硬體夥伴</option>
+                <option>投資人 / 加速器</option>
+                <option>其他</option>
+              </select>
+            </div>
+            <div>
+              <label for="message">訊息 / Message</label>
+              <textarea id="message" name="message" placeholder="請簡述您的需求、想合作的場域或任何想法…"></textarea>
+            </div>
+            <button type="submit">送出訊息（Demo 版不會實際送出）</button>
+          </form>
+        </div>
+        <div>
+          <div class="card">
+            <h3>部署案例展示（示意）</h3>
+            <p>
+              可在此放入實際部署現場的照片或短片縮圖，例如：旗艦博物館展區、企業品牌館、學校巡迴展等，搭配
+              簡短說明與指到更多媒體報導的連結。
+            </p>
+            <div class="pill-list" style="margin-top:0.8rem;">
+              <span class="pill">旗艦館：多畫作沉浸式展區</span>
+              <span class="pill">行動版：Museum-in-a-Box 巡迴展</span>
+              <span class="pill">專案合作：品牌體驗館</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="inner">
+      <span>Holo-Artisan Intelligence (心繪光影) – Personalized Multi-User Holographic Experience for Virtual Museums on the Edge.</span>
+      <span>此頁為新創公司示意網站與 MVP 展示，實際硬體規格、財務數字與合作模式請以正式商業計劃書與論文為準。</span>
+    </div>
+  </footer>
+
+  <script>
+    // Language toggle
+    const langToggle = document.getElementById('langToggle');
+    const navToggle = document.getElementById('navToggle');
+    const bodyEl = document.body;
+
+    if (langToggle) {
+      langToggle.addEventListener('click', () => {
+        const current = bodyEl.getAttribute('data-lang') || 'zh';
+        const next = current === 'zh' ? 'en' : 'zh';
+        bodyEl.setAttribute('data-lang', next);
+      });
+    }
+
+    if (navToggle) {
+      navToggle.addEventListener('click', () => {
+        bodyEl.classList.toggle('nav-open');
+      });
+    }
+
+    // Dynamic scenario timeline (from spreadsheet)
+const scenarioData = [
+  {
+    start: 0,
+    dur: 10,
+    visual:
+      '場景：羅浮宮展廳，人潮擁擠。鏡頭推向中央的《蒙娜麗莎》畫像。畫框看似普通，但周圍沒有反光玻璃。',
+    audio:
+      '(背景音) 博物館的低語聲，腳步聲。(旁白-男聲) "Imagine standing before the Mona Lisa in the Louvre."',
+    note: '建立真實感'
+  },
+  {
+    start: 10,
+    dur: 10,
+    visual: '特寫：左側一位年輕男士 (User A) 看著畫像。他輕輕微笑。',
+    audio: '(旁白) "You smile at her..."',
+    note: ''
+  },
+  {
+    start: 20,
+    dur: 5,
+    visual:
+      '主觀鏡頭 (User A 視角)：畫中的蒙娜麗莎眼神流轉，嘴角上揚，回以一個溫暖的微笑。',
+    audio:
+      '(音效) 輕柔、神秘的豎琴滑音。(旁白) "...and she smiles back. Only at you."',
+    note: '重點：只有他看到'
+  },
+  {
+    start: 25,
+    dur: 10,
+    visual: '鏡頭平移：右側一位女士 (User B) 皺眉，開口問道："Why are you watching me?"',
+    audio: '(User B 原音) "Why are you watching me?"',
+    note: ''
+  },
+  {
+    start: 35,
+    dur: 10,
+    visual: '主觀鏡頭 (User B 視角)：蒙娜麗莎的嘴唇開始動作，配合語音動畫。',
+    audio:
+      '(蒙娜麗莎 AI 生成語音) "I watch everyone, but today, I see you." (旁白) "While she answers a question for another..."',
+    note: ''
+  },
+  {
+    start: 45,
+    dur: 10,
+    visual:
+      '中景 (第三人視角)：站在後方的第三人 (User C) 看著畫作。畫作是靜止的經典狀態。User A 和 B 則各自沈浸在互動中。',
+    audio: '(旁白) "...the crowd sees the timeless masterpiece."',
+    note: '強調多工性'
+  },
+  {
+    start: 55,
+    dur: 5,
+    visual: 'Logo 動畫：Holo-Artisan Intelligence，字幕：Personalized Holography. No Glasses.',
+    audio: '(旁白) "Holo-Artisan. One artwork, infinite personal connections."',
+    note: ''
+  }
+];
+
+const stage = document.getElementById('scriptStage');
+const progressFill = document.getElementById('progressFill');
+let currentTime = 0;
+const totalTime = 60; // seconds
+
+function formatTime(sec) {
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  const mm = m.toString().padStart(2, '0');
+  const ss = s.toString().padStart(2, '0');
+  return `${mm}:${ss}`;
+}
+
+function renderSegment(seg) {
+  if (!stage) return;
+
+  const timeEl = stage.querySelector('.script-time');
+  const visEl = stage.querySelector('.script-visual');
+  const audioEl = stage.querySelector('.script-audio');
+  const noteEl = stage.querySelector('.script-note');
+
+  const startStr = formatTime(seg.start);
+  const endStr = formatTime(seg.start + seg.dur);
+
+  if (timeEl) timeEl.textContent = `${startStr} – ${endStr}`;
+  if (visEl) visEl.textContent = seg.visual;
+  if (audioEl) audioEl.textContent = seg.audio;
+  if (noteEl) noteEl.textContent = seg.note || '';
+}
+
+function updateScenario() {
+  if (!stage || !progressFill) return;
+
+  const seg =
+    scenarioData.find(
+      (s) => currentTime >= s.start && currentTime < s.start + s.dur
+    ) || scenarioData[scenarioData.length - 1];
+
+  renderSegment(seg);
+
+  const progress = Math.min(currentTime / totalTime, 1);
+  progressFill.style.width = `${(progress * 100).toFixed(1)}%`;
+}
+
+// 初始化一次畫面
+updateScenario();
+
+// 每 0.5 秒前進時間軸並更新畫面
+setInterval(() => {
+  currentTime += 0.5;
+  if (currentTime > totalTime) {
+    currentTime = 0; // 重頭循環播放
+  }
+  updateScenario();
+}, 500);
